@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+
+
+<div>
+    <script>
+        let canvas;
+        let capture;
+        let leftImage;
+        let rightImage;
+        let mode = 0;
+
+        function setup() {
+            capture = createCapture(VIDEO);
+            capture.hide();
+            canvas = createCanvas(640, 240);
+            canvas.id('mycanvas');
+            capture.size(320, 240);
+            rightImage = createImg('livestream');
+            rightImage.hide();
+            leftImage = loadImage('{{ leftImage }}'
+            );
+            setAttributes('preserveDrawingBuffer', true);
+        }
+
+        function draw() {
+            image(leftImage, 0, 0);
+            if (mode === 0) {
+                image(capture, 320, 0);
+            } else {
+                image(rightImage, 320, 0);
+            }
+            if (capture.width > 0) {
+                capture.loadPixels();
+            }
+        }
+
+        function keyPressed() {
+            if (key === ' ') {
+                if (mode === 0) {
+                    if (capture.width > 0) {
+                        capture.loadPixels();
+                        let imgData = capture.canvas.toDataURL('image/jpeg');
+                        let dataObj = {'image': imgData};
+                        $.ajax({
+                            type: 'POST',
+                            url: '',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            data: dataObj
+                        }).done(function () {
+                        });
+                    }
+                    mode++;
+                } else if(mode === 2){
+                    mode ++;
+                }
+                console.log(mode)
+            }
+        }
+
+        function keyReleased() {
+            if (key === ' ') {
+                if (mode === 1){
+                    mode++;
+                }
+                else if(mode === 3){
+                    location.href='';
+                }
+            }
+        }
+    </script>
+
+</div>
+
+</body>
+</html>
